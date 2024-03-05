@@ -70,37 +70,24 @@ class Solution:
         
         def merge(nums,left,mid,right):
             nums_=[]
-            # nums_=nums
             #nums[left:right+1] 表示从索引 left 开始到索引 right 结束的子数组。 
             i,j=left,mid+1
             while i<=mid and j<=right:
-                # print(i,mid,j,right,k)
                 if nums[i]<=nums[j]:
                     nums_.append(nums[i])
-                    # nums_[k]=nums[i]
-                    # print(nums_)
                     i+=1
-                    # k+=1
-                    # print("1",nums_,k)
                 else:
                     nums_.append(nums[j])
-                    # nums_[k]=nums[j]
-                    # print(nums_)
                     j+=1
-                    # k+=1
-                    # print(nums_,k)
-
             while i<=mid :
                 nums_.append(nums[i])
-                # print(nums_)
                 i+=1
             while j<=right:
                 nums_.append(nums[j])
-                # print(nums_)
                 j+=1
             nums[left:right+1] = nums_
-            # print(nums[left:right+1])
-        
+        #不用return改值就行
+                    
         def mergesort_(nums,left,right):
             if(left>=right):
                 return nums
@@ -128,31 +115,18 @@ class Solution:
             i,j,k=left,mid+1,0
             while i<=mid and j<=right:
                 if nums[i]<=nums[j]:
-                    # print(nums_[left+k],nums[i])
                     nums_[left+k]=nums[i]
-                    # print(f"i:nums_[{left+k}]=nums[{i}]")
-                    
                     i+=1
                     k+=1
                 else:
-                    # print(nums_[left+k],nums[j])
                     nums_[left+k]=nums[j]
-                    # print(f"j:nums_[{left+k}]=nums[{j}]")
-                    
                     j+=1
                     k+=1
             if i<=mid:
                 nums_[left+k:right+1]=nums[i:mid+1]
-                # print(nums)
             else:
                 nums_[left+k:right+1]=nums[j:right+1]
-                # print(nums)
-            
             nums[left:right+1]=nums_[left:right+1]
-            # print(nums)
-            # print(nums_)
-            # print(nums[left:right+1])
-            # return nums[left:right+1]
         
         def mergesort_(nums,left,right):
             if(left>=right):
