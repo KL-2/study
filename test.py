@@ -7,36 +7,51 @@ class Solution(object):
         :type documents: List[int]
         :rtype: int
         """
+        documentslist=[]
         for i in range(len(documents)-1):#0,1,2,3,...,len(documents)-1
             for j in range(i+1,len(documents)):
                 if documents[i]==documents[j]:
-                    return documents[i]
+                    documentslist.append(documents[i])
+        return documentslist
     
     def findRepeatDocument_sort(self,documents):
         documents.sort()
-        pre = documents[0]
-        for i in range(1,len(documents)):#跳过自己
-            if pre==documents[i]:#和比较documents[i+1]==documents[i]一样
-                return documents[i]
-            pre=documents[i]
-
+        documentslist=[]
+        for i in range(0,len(documents)-1):#-1是因为i+1
+            if documents[i]==documents[i+1]:
+                documentslist.append(documents[i])
+        return documentslist
+            
     def findRepeatDocument_haxi(self,documents):
         dict={}
-        # for i in range(len(documents)):
-        #     if documents[i] not in dict:
-        #         dict[i]=0 # here
-        #     else:
-        #         return documents[i]
-        for i in documents:#index的话就是range，如果都使用内容
-            if i not in dict:
-                dict[i]=1#=啥都行
-            else :
-                # print(dict,i)
+        for i in documents:
+            if i not in dict:   
+                dict[i]=0
+            else:
+                print(i)
                 return i
+
+    def findRepeatDocument_haxi_findall(self,documents):
+        mydict={i:0 for i in documents}
+        #{}-字典，键值对
+        #[]-列表
+        #()-元组，创建后不能修改
+        for i in documents:#index的话就是range，如果都使用内容
+            # if i not in dict:
+            mydict[i]+=1#=啥都行
+            # else :
+            #     # print(dict,i)
+            #     return i
+        print(mydict)
+        sort_dict=dict(sorted(mydict.items(),key=lambda item: item[0]))
+        for i in sort_dict:
+            if sort_dict[i] != 0:
+                print(f"{i}:{sort_dict[i]}")
 
         
 
     def findRepeatDocument_erfen(self,documents):
+        #数组长度n+1,所有数字1~n
         def judge(mid):
             count = 0
             for num in documents:
@@ -45,22 +60,21 @@ class Solution(object):
             return count
         
         def binary_search(left, right):
+            #不能找出所有重复的数字，[2,2]就不行，
+            # 能确定（1，2）有两个但不能确定是谁重复的
             if left >= right:
-                return left
-            
+                return left            
             mid = left + (right - left) // 2
             
             count=judge(mid)
             print(f"({left},{mid},{right})",count)
-            if count <= mid-left+1:#有问题
+            if count <= mid-left+1:
                 return binary_search(mid + 1, right)
             else:
                 return binary_search(left, mid)
         
-        return binary_search(0, len(documents) - 1)
+        return binary_search(1, len(documents) - 1)
 
-
-        
     
     def findRepeatDocument_jiaohuan(self,documents):
         for i in range (len(documents)):
@@ -87,10 +101,10 @@ class Solution(object):
         return None
 
 if __name__=='__main__':
-    doc=[3,4,2,1,1,0]
+    doc=[3,4,2,1,0,3,1,0]
     solution=Solution()
-    a=solution.findRepeatDocument_erfen(doc)
-    print(f"a:{a}")
+    a=solution.findRepeatDocument_jiaohuan(doc)
+    # print(f"a:{a}")
 
 
 
