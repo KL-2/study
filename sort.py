@@ -47,7 +47,9 @@ class Solution:
             nums[position]=value
             print(nums)
         return nums
-    
+
+
+
 if __name__=="__main__":
     solution=Solution()
     nums=[7,8,6,6,3,3,1]
