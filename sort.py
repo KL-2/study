@@ -40,7 +40,7 @@ class Solution:
             # print(f"i:{i}")
             value=nums[i]
             position=i
-            while(position>0 and nums[position-1]>value):
+            while(position>=1 and nums[position-1]>value):
                 nums[position]=nums[position-1]
                 position-=1
                 # print(f"position:{position}")
@@ -48,11 +48,26 @@ class Solution:
             print(nums)
         return nums
 
-
+    def shellsort(self,nums):
+        print(f"current algorithm:{sys._getframe().f_code.co_name}")
+        gap=int(len(nums)/2)
+        print(gap)
+        while gap>0:
+            for i in range(gap,len(nums)):
+                value=nums[i]
+                position=i
+                while (position>=gap and nums[position-gap]>value):
+                    nums[position]=nums[position-gap]
+                    position-=gap
+                nums[position]=value
+                # print(f"{position}|{nums}")
+            gap=int(gap/2)
+            print(gap)
+        return nums
 
 if __name__=="__main__":
     solution=Solution()
     nums=[7,8,6,6,3,3,1]
     print(f"input is {nums}")
-    sorted_nums=solution.insertionsort(nums)
+    sorted_nums=solution.shellsort(nums)
     print(sorted_nums)
