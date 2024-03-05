@@ -1,4 +1,5 @@
 import sys
+import random
 
 class Solution:
     def swapnums(self,nums,a,b):
@@ -51,23 +52,127 @@ class Solution:
     def shellsort(self,nums):
         print(f"current algorithm:{sys._getframe().f_code.co_name}")
         gap=int(len(nums)/2)
-        print(gap)
+        # print(gap)
         while gap>0:
             for i in range(gap,len(nums)):
                 value=nums[i]
                 position=i
                 while (position>=gap and nums[position-gap]>value):
                     nums[position]=nums[position-gap]
-                    position-=gap
+                    position-=gap#已知有序
                 nums[position]=value
                 # print(f"{position}|{nums}")
             gap=int(gap/2)
-            print(gap)
+            # print(gap)
         return nums
+
+    def mergesort(self,nums):
+        
+        def merge(nums,left,mid,right):
+            nums_=[]
+            # nums_=nums
+            #nums[left:right+1] 表示从索引 left 开始到索引 right 结束的子数组。 
+            i,j=left,mid+1
+            while i<=mid and j<=right:
+                # print(i,mid,j,right,k)
+                if nums[i]<=nums[j]:
+                    nums_.append(nums[i])
+                    # nums_[k]=nums[i]
+                    # print(nums_)
+                    i+=1
+                    # k+=1
+                    # print("1",nums_,k)
+                else:
+                    nums_.append(nums[j])
+                    # nums_[k]=nums[j]
+                    # print(nums_)
+                    j+=1
+                    # k+=1
+                    # print(nums_,k)
+
+            while i<=mid :
+                nums_.append(nums[i])
+                # print(nums_)
+                i+=1
+            while j<=right:
+                nums_.append(nums[j])
+                # print(nums_)
+                j+=1
+            nums[left:right+1] = nums_
+            # print(nums[left:right+1])
+        
+        def mergesort_(nums,left,right):
+            if(left>=right):
+                return nums
+            mid=left+(right-left)//2
+            mergesort_(nums,left,mid)
+            mergesort_(nums,mid+1,right)
+            merge(nums,left,mid,right)
+            return nums
+
+        left,right=0,len(nums)-1
+        sorted_nums=mergesort_(nums,left,right)
+        print(sorted_nums)
+        return sorted_nums
+ 
+    def mergesort1(self,nums): 
+        def merge(nums,left,mid,right):
+            #写法一
+            # nums_=nums[:]
+            #代码一顿就在这
+            #如果是nums_=nums二者指向的是同一个地址，一起更改
+            #写法二
+            nums_=[0]*len(nums)
+            nums_[left:right+1]=nums[left:right+1] 
+            #nums[left:right+1] 表示从索引 left 开始到索引 right 结束的子数组。 
+            i,j,k=left,mid+1,0
+            while i<=mid and j<=right:
+                if nums[i]<=nums[j]:
+                    # print(nums_[left+k],nums[i])
+                    nums_[left+k]=nums[i]
+                    # print(f"i:nums_[{left+k}]=nums[{i}]")
+                    
+                    i+=1
+                    k+=1
+                else:
+                    # print(nums_[left+k],nums[j])
+                    nums_[left+k]=nums[j]
+                    # print(f"j:nums_[{left+k}]=nums[{j}]")
+                    
+                    j+=1
+                    k+=1
+            if i<=mid:
+                nums_[left+k:right+1]=nums[i:mid+1]
+                # print(nums)
+            else:
+                nums_[left+k:right+1]=nums[j:right+1]
+                # print(nums)
+            
+            nums[left:right+1]=nums_[left:right+1]
+            # print(nums)
+            # print(nums_)
+            # print(nums[left:right+1])
+            # return nums[left:right+1]
+        
+        def mergesort_(nums,left,right):
+            if(left>=right):
+                return nums[left:right+1]
+            mid=left+(right-left)//2
+            mergesort_(nums,left,mid)
+            mergesort_(nums,mid+1,right)
+            merge(nums,left,mid,right)
+            return nums[left:right+1]
+
+        left,right=0,len(nums)-1
+        sorted_nums=mergesort_(nums,left,right)
+        # print(sorted_nums)
+        return sorted_nums
 
 if __name__=="__main__":
     solution=Solution()
-    nums=[7,8,6,6,3,3,1]
-    print(f"input is {nums}")
-    sorted_nums=solution.shellsort(nums)
-    print(sorted_nums)
+    random.seed(58)
+    arr = [random.randint(0,100) for _ in range(10)]
+    # arr=[4,3,2,5]
+    print("input:", arr)
+    sorted_arr=solution.mergesort1(arr)
+    print("result:", sorted_arr)
