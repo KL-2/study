@@ -142,11 +142,78 @@ class Solution:
         # print(sorted_nums)
         return sorted_nums
 
+    def quicksort(self,nums):
+        def partition(nums,left,right):
+            pivotindex=random.randint(left,right)
+            pivot=nums[pivotindex]
+            self.swapnums(nums,pivotindex,left)
+            index=left+1
+            for i in range(left+1,right+1):
+                if nums[i]<pivot:
+                    self.swapnums(nums,i,index)
+                    index+=1
+            self.swapnums(nums,left,index-1)
+            return index-1
+            
+        def quicksort_(nums,left=None,right=None):
+            left=0 if not isinstance(left,(int,float)) else left
+            right=len(nums)-1 if not isinstance(right,(int,float)) else right
+            if left<right:
+                partitionindex=partition(nums,left,right)
+                quicksort_(nums,left,partitionindex-1)
+                quicksort_(nums,partitionindex+1,right)
+            return nums
+        sorted_nums=quicksort_(nums)
+        return sorted_nums
+
+    def heapsort(self,nums):
+        def heapify(nums,len,i):
+            left=2*i+1
+            right=2*i+2
+            largest=i
+            if (left<len and nums[left]>nums[largest]):
+                largest=left
+            if (right<len and nums[right]>nums[largest]):
+                largest=right
+            if i!=largest:# change root,if needed
+                self.swapnums(nums,i,largest)
+                #heapify the root
+                heapify(nums,len,largest)#这一步只在不等时执行否则死循环
+        def heapsort_(nums):
+            #build a maxheap
+            for i in range(len(nums)//2-1,-1,-1):
+                heapify(nums,len(nums),i)
+            # one by one extract elements
+            for i in range(len(nums)-1,0,-1):
+                self.swapnums(nums,i,0)
+                heapify(nums,i,0)
+            return nums
+        sorted_nums=heapsort_(nums)
+        return sorted_nums
+
+    def countingsort(self,nums):
+        maxvalue=max(nums)
+        minvalue=min(nums)
+        bucketlen=maxvalue-minvalue+1
+        bucket=[0]*bucketlen
+        sorted_nums=[0]*len(nums)
+        for i in nums:
+            if not bucket[i-minvalue]:
+                bucket[i-minvalue]=0
+            bucket[i-minvalue]+=1
+        sortedindex=0
+        for i in range(bucketlen):
+            while bucket[i-minvalue]>0:
+                sorted_nums[sortedindex]=i
+                sortedindex+=1
+                bucket[i-minvalue]-=1    
+        return sorted_nums
+
 if __name__=="__main__":
     solution=Solution()
     random.seed(58)
     arr = [random.randint(0,100) for _ in range(10)]
     # arr=[4,3,2,5]
     print("input:", arr)
-    sorted_arr=solution.mergesort1(arr)
+    sorted_arr=solution.countingsort(arr)
     print("result:", sorted_arr)
