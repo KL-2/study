@@ -1,5 +1,27 @@
 import sys
 import random
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+    # @staticmethod
+    def arrayToList(arr):
+        dummy = ListNode(0)
+        current = dummy
+        for value in arr:
+            current.next = ListNode(value)
+            current = current.next
+        return dummy.next
+
+    # @staticmethod
+    def listToArray(head):
+        arr = []
+        current = head
+        while current:
+            arr.append(current.val)
+            current = current.next
+        return arr
 
 class Solution:
     def swapnums(self,nums,a,b):
@@ -34,6 +56,41 @@ class Solution:
                 self.swapnums(nums,i,min)
                 print(nums)
         return nums
+
+    def selectionsortlist(self,nums):
+        def selectionSortList(head):
+            # 选择排序主函数
+            dummy = ListNode(0)
+            dummy.next = head
+            current = dummy
+            
+            while current.next:
+                # 寻找最小节点
+                min_node = current.next
+                pre_min = current
+                search = current.next
+                
+                while search.next:
+                    if search.next.val < min_node.val:
+                        min_node = search.next
+                        pre_min = search
+                    search = search.next
+                
+                # 交换节点
+                if pre_min != current:
+                    pre_min.next = min_node.next
+                    min_node.next = current.next
+                    current.next = min_node
+                
+                current = current.next
+            
+            return dummy.next
+        
+        head = ListNode.arrayToList(nums)  # 使用类方法将数组转换为链表
+        print("List converted from array:")
+        sortedlist = selectionSortList(head)
+        sortedlistnums = ListNode.listToArray(sortedlist)  # 使用类方法将链表转换为数组
+        return sortedlistnums
 
     def insertionsort(self,nums):
         print(f"current algorithm:{sys._getframe().f_code.co_name}")
@@ -257,5 +314,5 @@ if __name__=="__main__":
     arr = [random.randint(0,100) for _ in range(10)]
     # arr=[4,3,2,5]
     print("input:", arr)
-    sorted_arr=solution.bucketsort(arr)
+    sorted_arr=solution.selectionsortlist(arr)
     print("result:", sorted_arr)
