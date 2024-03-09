@@ -87,10 +87,9 @@ class Solution:
             return dummy.next
         
         head = ListNode.arrayToList(nums)  # 使用类方法将数组转换为链表
-        print("List converted from array:")
         sortedlist = selectionSortList(head)
-        sortedlistnums = ListNode.listToArray(sortedlist)  # 使用类方法将链表转换为数组
-        return sortedlistnums
+        sortednums = ListNode.listToArray(sortedlist)  # 使用类方法将链表转换为数组
+        return sortednums
 
     def insertionsort(self,nums):
         print(f"current algorithm:{sys._getframe().f_code.co_name}")
