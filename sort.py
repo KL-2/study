@@ -209,11 +209,53 @@ class Solution:
                 bucket[i-minvalue]-=1    
         return sorted_nums
 
+    def bucketsort(self,nums):
+        minvalue=min(nums)
+        maxvalue=max(nums)
+        bucketnum=10
+        bucketrange=(maxvalue-minvalue+1)/bucketnum
+        bucket=[[] for _ in range(bucketnum)]
+        # print(bucket)# [[], [], [], [], [], [], [], [], [], []]
+
+        for i in nums:
+            index=int((i-minvalue)/bucketrange)
+            if i==maxvalue:
+                index-=1
+            bucket[index].append(i)
+
+        if True:    
+            sorted_nums=[]
+
+            for bucket_ in bucket:
+                sorted_nums.extend(sorted(bucket_))
+        else:         
+            sorted_nums=nums[:]
+            # 对每个桶进行排序
+            for i in range(bucketnum):
+                bucket[i].sort()
+            
+            # 合并桶中的元素
+            k = 0
+            for i in range(bucketnum):
+                for j in range(len(bucket[i])):
+                    sorted_nums[k] = bucket[i][j]
+                    k += 1
+        return sorted_nums
+
+    def radixsort(self,nums):
+        maxvalue=max(nums)
+        exp=1
+        sorted_nums=nums[:]
+        while maxvalue//exp>0:
+            sorted_nums=sorted(nums,key=lambda x:(x//exp)%10)
+            exp*=10
+        return sorted_nums
+
 if __name__=="__main__":
     solution=Solution()
     random.seed(58)
     arr = [random.randint(0,100) for _ in range(10)]
     # arr=[4,3,2,5]
     print("input:", arr)
-    sorted_arr=solution.countingsort(arr)
+    sorted_arr=solution.bucketsort(arr)
     print("result:", sorted_arr)
