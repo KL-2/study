@@ -84,64 +84,91 @@ class Solution:
                 return True,path
         return False,[]
 
-    def bs(self,start, goal):#bidirectional-search
+    def bs(self,start,goal):#bidirectional-search
         if start == goal:
             return [start]
 
         # Initialize frontiers for both searches
-        frontier_start = {start}
-        frontier_goal = {goal}
+        frontierstart = {start}
+        frontiergoal = {goal}
 
         # Initialize paths
-        path_start = {start: [start]}
-        path_goal = {goal: [goal]}
+        pathstart = {start: [start]}
+        pathgoal = {goal: [goal]}
 
-        while frontier_start and frontier_goal:
+        while frontierstart and frontiergoal:
             # Expand in forward direction
-            next_frontier_start = set()
-            for u in frontier_start:
+            nextfrontierstart = set()
+            for u in frontierstart:
                 for v in graph.graph[u]:
-                    if v in frontier_goal:  # Check for meeting point
-                        return path_start[u] + path_goal[v][::-1][1:]
-                    if v not in path_start:
-                        path_start[v] = path_start[u] + [v]
-                        next_frontier_start.add(v)
-            frontier_start = next_frontier_start
+                    if v in frontiergoal:  # Check for me
+                        return pathstart[u] + pathgoal[v][::-1][1:]
+                        #pathgoal[v][::-1][1:]是pathgoal[v]对应的键值再去掉第一个
+                        #即倒序然后再去除重复的那个节点
+                    if v not in pathstart:
+                        pathstart[v] = pathstart[u] + [v]
+                        nextfrontierstart.add(v)
+            frontierstart = nextfrontierstart
 
             # Expand in backward direction
-            next_frontier_goal = set()
-            for u in frontier_goal:
+            nextfrontiergoal = set()
+            for u in frontiergoal:
                 for v in graph.graph[u]:
-                    if v in frontier_start:  # Check for meeting point
-                        return path_start[v] + path_goal[u][::-1][1:]
-                    if v not in path_goal:
-                        path_goal[v] = path_goal[u] + [v]
-                        next_frontier_goal.add(v)
-            frontier_goal = next_frontier_goal
+                    if v in frontierstart:  # Check for meeting point
+                        return pathstart[v] + pathgoal[u][::-1][1:]
+                    if v not in pathgoal:
+                        pathgoal[v] = pathgoal[u] + [v]
+                        nextfrontiergoal.add(v)
+            frontiergoal = nextfrontiergoal
 
         return []
 
+    def heuristic(self,start,goal):
+        for neighbour,edgecost in self.graph.get(start,[]):
+            if neighbour==goal:
+                return edgecost
+        return 10000
+    
+    def gbfs(self,start,goal):#greedy bfs
+        queue=[(start,[start])]
+        visited=set([start])
+        while queue:
+            current,path=min(queue,key=lambda x:self.heuristic(x[0],goal))
+            queue.remove((current,path))
+            if current==goal:
+                return path
+            visited.add(current)
+            for neighbour,_ in self.graph[current]:
+                if neighbour not in visited:
+                    newpath=path+[neighbour]
+                    queue.append((neighbour,newpath))
+        return None
+    
 if __name__=="__main__":
     print("SAY MY NAME!")
     graph=Solution()
     graphwithcost=Solution()
-    edges={('A','B','1'),('C','B',2),('B','O',3),('O','C',8),('R','O',2),('C','R',2)}
+    edges={('A','B',1),('C','B',2),('B','O',3),('O','C',8),('R','O',2),('C','R',2)}
     for edge in edges:
         graphwithcost.addedgewithcost(*edge)#解包操作
         graph.addedge(edge[0],edge[1])
-    searchresult=graph.dfs('A')
-    print(searchresult)
-    cost,path=graphwithcost.ucs('A','R')
-    print(path,cost)
-    found,path=graph.dls('A','R',limit=3)
-    if found:
-        print(path)
-    else:
-        print(f"No path founded")
-    found,path=graph.ids('A','R',maxdepth=3)
-    if found:
-        print(path)
-    else:
-        print(f"No path founded")
-    path = graph.bs('A','R')
+    # searchresult=graph.dfs('A')
+    # print(searchresult)
+    # cost,path=graphwithcost.ucs('A','R')
+    # print(path,cost)
+    # found,path=graph.dls('A','R',limit=3)
+    # if found:
+    #     print(path)
+    # else:
+    #     print(f"No path founded")
+    # found,path=graph.ids('A','R',maxdepth=3)
+    # if found:
+    #     print(path)
+    # else:
+    #     print(f"No path founded")
+    # path = graph.bs('A','R')
+    # print(path)
+    path=graphwithcost.gbfs('A','R')
     print(path)
+
+
