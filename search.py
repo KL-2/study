@@ -136,7 +136,7 @@ class Solution:
             current,path=min(queue,key=lambda x:self.heuristic(x[0],goal))
             queue.remove((current,path))
             if current==goal:
-                return path
+                return path                
             visited.add(current)
             for neighbour,_ in self.graph[current]:
                 if neighbour not in visited:

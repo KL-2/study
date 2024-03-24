@@ -8,7 +8,7 @@ class Solution(object):
         :rtype: int
         """
         documentslist=[]
-        for i in range(len(documents)-1):#0,1,2,3,...,len(documents)-1
+        for i in range(len(documents)-1):#0,1,2,3,...,(len(documents)-1)-1
             for j in range(i+1,len(documents)):
                 if documents[i]==documents[j]:
                     documentslist.append(documents[i])
