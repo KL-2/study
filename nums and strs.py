@@ -43,6 +43,7 @@ class Solution(object):
         return result
     
     def mergeintervals(self,intervals):
+        # 以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。
         for interval in intervals:
             if not isinstance(interval,list) or len(interval)!=2:
                     return -1
@@ -51,6 +52,7 @@ class Solution(object):
                     return -1
             if (interval[0]>interval[1]):
                 return -1
+            
         intervals.sort(key=lambda x:x[0])
         merged=[]
         for interval in intervals:
@@ -59,6 +61,69 @@ class Solution(object):
             else :
                 merged[-1][1]=max(merged[-1][1],interval[1])
         return merged
+
+    def rotate(self,matrix):
+        # 给你一幅由 N × N 矩阵表示的图像，其中每个像素的大小为 4 字节。请你设计一种算法，将图像旋转 90 度。
+        for matrix_ in matrix:
+            if not isinstance(matrix_,list):
+                    return -1
+            for matrix__ in matrix_:
+                if not isinstance(matrix__,int):
+                    return -1
+        row=len(matrix)
+        col=len(matrix[0])
+        matrixnew=[[0]*row for _ in range(col)]#旋转后形状
+        for i in range(row):#遍历原矩阵
+            for j in range(col):
+                matrixnew[j][row-i-1]=matrix[i][j]
+                #matrixnew[0][row]=matrix[0][0]
+        matrix[:]=matrixnew#这里形状改变了也ok
+        return matrix
+    
+    def rotate_better(self,matrix):
+        # 给你一幅由 N × N 矩阵表示的图像，其中每个像素的大小为 4 字节。请你设计一种算法，将图像旋转 90 度。
+        #无需重建新的数组
+        for matrix_ in matrix:
+            if not isinstance(matrix_,list):
+                    return -1
+            for matrix__ in matrix_:
+                if not isinstance(matrix__,int):
+                    return -1
+        row=len(matrix)
+        col=len(matrix[0])
+        if row!=col:
+            return -1
+        for i in range(row//2):#遍历原矩阵
+            for j in range((col+1)//2):
+                matrix[i][j],matrix[row-j-1][i],matrix[row-i-1][row-j-1],matrix[j][row-i-1]=matrix[row-j-1][i],matrix[row-i-1][row-j-1],matrix[j][row-i-1],matrix[i][j]
+                #matrix[j][row-i-1]=matrix[i][j]
+                #不能拆开
+        return matrix
+
+    def rotate_1(self,matrix):
+        # 给你一幅由 N × N 矩阵表示的图像，其中每个像素的大小为 4 字节。请你设计一种算法，将图像旋转 90 度。
+        for matrix_ in matrix:
+            if not isinstance(matrix_,list):
+                    return -1
+            for matrix__ in matrix_:
+                if not isinstance(matrix__,int):
+                    return -1
+        row=len(matrix)
+        col=len(matrix[0])
+        if row!=col:
+            return -1
+        #水平翻转
+        for i in range(row//2):
+            for j in range(col):
+                matrix[row-i-1][j],matrix[i][j]=matrix[i][j],matrix[row-i-1][j]
+                #顺序无所谓，不能拆开就是同时换，之前遇到的不要包括在内
+                # matrix[i][j],matrix[row-i-1][j]=matrix[row-i-1][j],matrix[i][j]
+        #对角线翻转
+        for i in range(row):
+            for j in range(i):
+                matrix[i][j],matrix[j][i]=matrix[j][i],matrix[i][j]
+        return matrix
+
 
 if __name__=="__main__":
     numslist_pivotIndex=[
@@ -85,6 +150,33 @@ if __name__=="__main__":
               [[[9,'4'],5,"$"],-1],#错误输入
               [[[[3,4],[5,6]]],-1],#错误嵌套
               [[[1,7]],[[1,7]]]]#单个区间
+    matrixlist_rotate=[
+            [[[1,2,3],
+              [4,5,6],
+              [7,8,9]],
+             [[7,4,1],
+              [8,5,2],
+              [9,6,3]]],#N*N
+            [[[1,2,3],
+              [4,5,6]],
+             [[4,1],
+              [5,2],
+              [6,3]]],#N1*N2
+            [[[9,'4'],5,"$"],-1],#错误输入
+    ]
+    matrixlist_rotate1=[
+            [[[1,2,3],
+              [4,5,6],
+              [7,8,9]],
+             [[7,4,1],
+              [8,5,2],
+              [9,6,3]]],#N*N
+            [[[1,2,3],
+              [4,5,6]],
+             -1],#N1*N2
+            [[[9,'4'],5,"$"],-1],#错误输入
+    ]
+
     solution=Solution()
     ALLCORRECT=True
     # for nums in numslist_pivotIndex:
@@ -95,11 +187,23 @@ if __name__=="__main__":
     #     if solution.searchInsert(nums[0],nums[1])!=nums[2]:
     #         print(nums[0],nums[1],solution.searchInsert(nums[0],nums[1]),'correct is ',nums[2]) 
     #         ALLCORRECT=False
-    for nums in numslist_mergeintervals:
-        if solution.mergeintervals(nums[0])!=nums[1]:
-            print(nums[0],solution.mergeintervals(nums[0]),'correct is ',nums[1]) 
+    # for nums in numslist_mergeintervals:
+    #     if solution.mergeintervals(nums[0])!=nums[1]:
+    #         print(nums[0],solution.mergeintervals(nums[0]),'correct is ',nums[1]) 
+    #         ALLCORRECT=False
+    # for matrix in matrixlist_rotate:
+    #     if solution.rotate(matrix[0])!=matrix[1]:
+    #         print(matrix[0],solution.rotate(matrix[0]),'correct is ',matrix[1]) 
+    #         ALLCORRECT=False
+    # for matrix in matrixlist_rotate1:
+    #     if solution.rotate_better(matrix[0])!=matrix[1]:
+    #         print(matrix[0],solution.rotate_better(matrix[0]),'correct is ',matrix[1]) 
+    #         ALLCORRECT=False
+    for matrix in matrixlist_rotate1:
+        if solution.rotate_1(matrix[0])!=matrix[1]:
+            print(matrix[0],solution.rotate(matrix[0]),'correct is ',matrix[1]) 
             ALLCORRECT=False
-
+    
     if (ALLCORRECT==True):
         print("all correct!")
         print("say my name!")
