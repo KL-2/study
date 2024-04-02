@@ -23,7 +23,25 @@ class Queue:
         while self.stack_for_enqueue:#如果dequeue没有，enqueue有，先放到dequeue里再输出
             self.stack_for_dequeue.append(self.stack_for_enqueue.pop())
         return self.stack_for_dequeue.pop()
-    
+from collections import deque
+class Stack:
+    def __init__(self) -> None:
+        self.queue_in=deque()
+        self.queue_out=deque()
+    def push(self,value):
+        self.queue_in.append(value)
+    def pop(self):
+        if not self.queue_in:
+            return None
+        for _ in range(len(self.queue_in)-1):#除了最后一个
+            self.queue_out.append(self.queue_in.popleft())
+        self.queue_in,self.queue_out=self.queue_out,self.queue_in
+        return self.queue_out.popleft()#将最后一个pop，out为空
+    def top(self):
+        if not self.queue_in:
+            return None
+        return self.queue_in[-1]
+
 def Test1():#正常情况,空队列删除添加元素
     queue=Queue()
     queue.appendTail(10)
@@ -48,8 +66,18 @@ def Test4():
     queue.deleteHead()
     return queue.deleteHead()
 
+def Test5():
+    stack=Stack()
+    stack.pop()
+    stack.push(3)
+    stack.top()
+    print(stack.queue_in)
+    stack.pop()
+    return stack.queue_in
+
 if "__main__"==__name__:
-    print(f"Test1 is {Test1()},correct is 10")
-    print(f"Test2 is {Test2()},correct is -1")
-    print(f"Test3 is {Test3()},correct is -1")
-    print(f"Test3 is {Test4()},correct is 8")
+    # print(f"Test1 is {Test1()},correct is 10")
+    # print(f"Test2 is {Test2()},correct is -1")
+    # print(f"Test3 is {Test3()},correct is -1")
+    # print(f"Test3 is {Test4()},correct is 8")
+    print(f"{Test5()}")
