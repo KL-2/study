@@ -6,3 +6,5 @@ ctrl+shift+e    :调出explorer
 ctrl+shift+g    :调出github
 ctrl+shift+f    :全局查找
 alt+<-  :回到上一步
+home,end:行首行尾
+ctrl+home,end:页首页尾
