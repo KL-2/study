@@ -1,285 +1,49 @@
-#使用LSTM预测比特币价格
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')
-
 import tensorflow as tf
-tf.logging.set_verbosity(tf.logging.ERROR)
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelBinarizer
 
-import warnings
-warnings.filterwarnings('ignore')
+import numpy as np
+from sklearn.datasets import make_blobs
 
-df=pd.read_csv("data/btc.csv")
-# print(df.head())
-data=df['Close'].values
-scaler=StandardScaler()
-data=scaler.fit_transform(data.reshape(-1,1))
-#绘制并观察比特币价格波动
-# plt.plot(data)
-# plt.xlabel('Days')
-# plt.ylabel('Price')
-# plt.grid()
-# plt.show()
-def get_data(data, window_size):
-    X = []
-    y = []
-    
-    i = 0
-    
-    while (i + window_size) <= len(data) - 1:
-        X.append(data[i:i+window_size])
-        y.append(data[i+window_size])
-        
-        i += 1
-    assert len(X) ==  len(y)
-    return X, y
+# 创建一个简单的特征点数据和标签数据
+n_samples = 300
+n_features = 10
+n_clusters = 3
 
+# 创建特征点数据
+X, _ = make_blobs(n_samples=n_samples, n_features=n_features, centers=n_clusters, random_state=42)
 
-X, y = get_data(data, window_size = 7)
-#train set
-X_train  = np.array(X[:1000])
-y_train = np.array(y[:1000])
+# 创建随机的标签数据，用于测试
+y = np.random.choice(['action1', 'action2', 'action3'], size=n_samples)
 
-#test set
-X_test = np.array(X[1000:])
-y_test = np.array(y[1000:])
-# print(X_train.shape)#(1000, 7, 1)
-batch_size=7
-window_size=7
-hidden_layer=256
-learning_rate=0.001
+print("特征点数据 X 的形状：", X.shape)
+print("标签数据 y 的形状：", y.shape)
 
 
-input = tf.placeholder(tf.float32, [batch_size, window_size, 1])
-target = tf.placeholder(tf.float32, [batch_size, 1])
-#输入门
-U_i = tf.Variable(tf.truncated_normal([1, hidden_layer], stddev=0.05))
-W_i = tf.Variable(tf.truncated_normal([hidden_layer, hidden_layer], stddev=0.05))
-b_i = tf.Variable(tf.zeros([hidden_layer]))
-#遗忘门
+# # 假设我们已经有特征点数据和对应的标签
+# X = keypoints
+# y = labels  # 替换为实际标签
 
-U_f = tf.Variable(tf.truncated_normal([1, hidden_layer], stddev=0.05))
-W_f = tf.Variable(tf.truncated_normal([hidden_layer, hidden_layer], stddev=0.05))
-b_f = tf.Variable(tf.zeros([hidden_layer]))
-#输出门
+# 数据预处理
+lb = LabelBinarizer()
+y = lb.fit_transform(y)
 
-U_o = tf.Variable(tf.truncated_normal([1, hidden_layer], stddev=0.05))
-W_o = tf.Variable(tf.truncated_normal([hidden_layer, hidden_layer], stddev=0.05))
-b_o = tf.Variable(tf.zeros([hidden_layer]))
-#候选状态
-U_g = tf.Variable(tf.truncated_normal([1, hidden_layer], stddev=0.05))
-W_g = tf.Variable(tf.truncated_normal([hidden_layer, hidden_layer], stddev=0.05))
-b_g = tf.Variable(tf.zeros([hidden_layer]))
-#输出层
+# 分割数据集
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-V = tf.Variable(tf.truncated_normal([hidden_layer, 1], stddev=0.05))
-b_v = tf.Variable(tf.zeros([1]))
+# 构建LSTM模型
+model = Sequential()
+model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2])))
+model.add(LSTM(128, return_sequences=False, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(y.shape[1], activation='softmax'))
 
-def LSTM_cell(input, prev_hidden_state, prev_cell_state):
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
+# 训练模型
+model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
 
-    it = tf.sigmoid(tf.matmul(input, U_i) + tf.matmul(prev_hidden_state, W_i) + b_i)
-
-    ft = tf.sigmoid(tf.matmul(input, U_f) + tf.matmul(prev_hidden_state, W_f) + b_f)
-
-    ot = tf.sigmoid(tf.matmul(input, U_o) + tf.matmul(prev_hidden_state, W_o) + b_o)
-
-    gt = tf.tanh(tf.matmul(input, U_g) + tf.matmul(prev_hidden_state, W_g) + b_g)
-
-    ct = (prev_cell_state * ft) + (it * gt)
-
-    ht = ot * tf.tanh(ct)
-
-    return ct, ht
-#前向传播
-y_hat=[]
-#for each batch we compute the output and store it in the y_hat list
-for i in range(batch_size): 
-  
-    #initialize hidden state and cell state for each batch
-    hidden_state = np.zeros([1, hidden_layer], dtype=np.float32) 
-    cell_state = np.zeros([1, hidden_layer], dtype=np.float32)
-    
-    
-    #compute the hidden state and cell state of the LSTM cell for each time step
-    for t in range(window_size):
-        cell_state, hidden_state = LSTM_cell(tf.reshape(input[i][t], (-1, 1)), hidden_state, cell_state)
-        
-    #compute y_hat and append it to y_hat list
-    y_hat.append(tf.matmul(hidden_state, V) + b_v)
-#反向传播
-losses=[]
-for i in range(len(y_hat)):
-    losses.append(tf.losses.mean_squared_error(tf.reshape(target[i],(-1,1)),y_hat[i]))
-    loss=tf.reduce_mean(losses)
-
-#梯度剪辑
-gradients=tf.gradients(loss,tf.trainable_variables())
-clipped,_=tf.clip_by_global_norm(gradients,4.)
-optimizer=tf.train.AdamOptimizer(learning_rate).apply_gradients(zip(gradients,tf.trainable_variables()))
-#train LSTM
-session=tf.Session()
-session.run(tf.global_variables_initializer())
-epochs=10
-
-for i in range(epochs):
-    train_predictions=[]
-    index=0
-    epoch_loss=[]
-    while(index+batch_size)<=len(X_train):
-        X_batch=X_train[index:index+batch_size]
-        Y_batch=y_train[index:index+batch_size]
-
-        #predict the price and compute the loss
-        predicted,loss_val,_=session.run([y_hat,loss,optimizer],
-        feed_dict={input:X_batch,target:Y_batch})
-
-        #store the loss in the epoch_loss list
-        epoch_loss.append(loss_val)
-
-        #store the predictions in the train_predictions list
-        train_predictions.append(predicted)
-        index+=batch_size
-    if (i%10):
-        print('Epoch {},Loss {}'.format(i,np.mean(epoch_loss)))
-
-predicted_output=[]
-i=0
-while i+batch_size<=len(X_test):
-    output=session.run([y_hat],feed_dict={input:X_test[i:i+batch_size]})
-    i+=batch_size
-    predicted_output.append(output)
-predicted_values_test=[]
-for i in range(len(predicted_output)):
-    for j in range(len(predicted_output[i][0])):
-        predicted_values_test.append(predicted_output[i][0][j])
-predictions=[]
-for i in range(1280):
-    if i >=1000:
-        predictions.append(predicted_values_test[i-1019])
-    else:
-        predictions.append(None)
-
-plt.figure(figsize=(16,7))
-plt.plot(data,label='Actual')
-plt.plot(predictions,label='Predicted')
-plt.legend()
-plt.xlabel('Days')
-plt.ylabel('Price')
-plt.grid()
-plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 保存模型
+model.save('action_model.h5')
