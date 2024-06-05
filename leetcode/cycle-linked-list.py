@@ -17,18 +17,25 @@ def list_to_linkedlist(lst, pos):
         return None
     head = ListNode(lst[0])
     current = head
-    cycle_entry = None
-    if pos == 0:
-        cycle_entry = head
+    cycle_entry = None#add for cycle
+    if pos == 0:#add for cycle
+        cycle_entry = head#add for cycle
     for index, value in enumerate(lst[1:], 1):
+        #都是从第二个开始
         current.next = ListNode(value)
         current = current.next
-        if index == pos:
-            cycle_entry = current
+        if index == pos:#add for cycle
+            cycle_entry = current#add for cycle
     #到结尾了
-    if cycle_entry is not None:  # Create the cycle if pos is not -1
-        current.next = cycle_entry
+    if cycle_entry is not None:  # Create the cycle if pos is not -1#add for cycle
+        current.next = cycle_entry#add for cycle
     return head
+
+
+#     for value in list[1:]:
+#         current.next = ListNode(value)
+#         current = current.next
+#     return head
 
 class Solution(object):
     def detectCycle(self, head):
