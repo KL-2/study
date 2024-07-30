@@ -13,6 +13,9 @@ int getMin() 获取堆栈中的最小元素
 LeetCode 第155题 最小栈
 
 《剑指Offer第2版》第30题 包含min函数的栈
+LeetCode 第155题 最小栈
+
+《剑指Offer第2版》第30题 包含min函数的栈
 '''
 
 

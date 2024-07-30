@@ -1,4 +1,5 @@
-# LCR120
+# LCR120 LCR 120. 寻找文件副本
+#剑指Offer第2版 3. 数组中重复的数字
 # 设备中存有 n 个文件，文件 id 记于数组 documents。
 # 若文件 id 相同，则定义为该文件存在副本。请返回任一存在副本的文件 id。
 class Solution(object):

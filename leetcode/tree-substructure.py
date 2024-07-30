@@ -6,7 +6,16 @@ LCR 143. 子结构判断
 
 
 '''
+'''
 
+《剑指Offer第2版》第26题 树的子结构
+
+LCR 143. 子结构判断
+
+给定两棵二叉树 tree1 和 tree2,判断 tree2 是否以 tree1 的某个节点为根的子树具有 相同的结构和节点值 。
+注意，空树 不会是以 tree1 的某个节点为根的子树具有 相同的结构和节点值 。
+
+'''
 # Definition for a binary tree node.
 class TreeNode(object):
     def __init__(self, x):
@@ -15,7 +24,19 @@ class TreeNode(object):
         self.right = None
 
 class Solution(object):
-    def isSubStructure(self, A, B):
+    def isSubStructure(self,A,B):
+        def recur(A,B):
+            if not B :
+                return True
+            if not A:
+                return False
+            if A.val!=B.val:
+                return False
+            return recur(A.left,B.left) and recur(A.right,B.right)
+        if not(A and B):
+            return False
+        return self.isSubStructure(A.left,B) or self.isSubStructure(A.right,B) or recur(A,B)
+    def isSubStructure2(self, A, B):
         def recur(A,B):
             if not B:
                 return True
