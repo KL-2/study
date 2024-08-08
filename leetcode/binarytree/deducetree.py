@@ -16,6 +16,7 @@ class TreeNode(object):
         self.right = right
 class Solution(object):
     def deduceTree(self, preorder, inorder):
+        # 注 后序排序：postorder
         """
         :type preorder: List[int]
         :type inorder: List[int]

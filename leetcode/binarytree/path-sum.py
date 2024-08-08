@@ -2,7 +2,7 @@
 
 《剑指Offer第2版》 第34题 二叉树中和为某一值的路径
 
-113. 路径总和 II
+113. 路径总和 II  
 
 给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。
 
@@ -33,7 +33,7 @@ class Solution(object):
                 res.append(list(path))
             recur(root.left,tar)
             recur(root.right,tar)
-            path.pop()
+            path.pop()# path 弹出了root.val
 
         recur(root,targetSum)
         return res

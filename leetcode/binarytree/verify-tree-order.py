@@ -15,11 +15,11 @@ class Solution(object):
         """
         if not postorder:
             return True
-        root=postorder[-1]
-        cur_index=0
+        root=postorder[-1] # 得到根节点
+        # cur_index=0
         for i in range(len(postorder)):
-            if postorder[i]>root:
-                cur_index=i
+            if postorder[i]>root: # 找到左子树终点
+                # cur_index=i
                 break
         left=postorder[:i]
         right=postorder[i:-1]
