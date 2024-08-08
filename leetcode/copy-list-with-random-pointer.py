@@ -42,18 +42,20 @@ class Solution(object):
             # print(dic[cur].val)#给的值
             # print(dic[cur])#给的地址
             cur=cur.next
+        # cur=head
+        # print("cur.next的值")
+        # while cur:
+        #     print(dic[cur].val)
+        #     cur=cur.next
+        # cur=head
+        # print("cur.random的值")
+        # while cur:
+        #     print(dic[cur.random].val)
+        #     cur=cur.next
         cur=head
-        print("cur.next的值")
         while cur:
-            print(dic[cur].val)
-            cur=cur.next
-        cur=head
-        print("cur.random的值")
-        while cur:
-            print(dic[cur.random].val)
-            cur=cur.next
-        cur=head
-        while cur:
+            # 在字典dic中，每个键都是原链表中的一个节点的地址
+            # dic[cur.random].val
             dic[cur].next=dic.get(cur.next)#得到的是地址
             dic[cur].random=dic.get(cur.random)
             cur=cur.next

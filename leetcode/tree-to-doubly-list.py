@@ -1,5 +1,5 @@
 '''
-LeetCode 第426题 将二叉搜索树转化为排序的双向链表 （访问需要解锁）
+LeetCode 第426题 将二叉搜索树转化为排序的双向链表
 
 《剑指Offer第2版》第36题 二叉搜索树与双向链表
 LCR 155. 将二叉搜索树转化为排序的双向链表
@@ -29,11 +29,12 @@ class Solution(object):
         def dfs(cur):
             if not cur:return
             dfs(cur.left)#中序遍历
+            # 此时左子树已经排好序而且双向了
             if not self.pre:
                 self.head=cur#设置head作为起点
             else:
-                cur.left=self.pre#双向
-                self.pre.right=cur
+                cur.left=self.pre#双向，和左子树最大的链接
+                self.pre.right=cur#左子树最大的和cur链接
             self.pre=cur
             dfs(cur.right)
         self.pre=None
