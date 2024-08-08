@@ -41,4 +41,4 @@ class Solution(object):
         dfs(root)
         self.head.left=self.pre#循环
         self.pre.right=self.head
-        return self.head
+        return self.head # 返回的是排序结果的最小值
